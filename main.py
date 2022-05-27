@@ -1,10 +1,6 @@
 import sys
-import mysql.connector
 
-
-def connect_to_database():
-    cnx = mysql.connector.connect(user="root", password="bobafett", host="127.0.0.1", database="datalake")
-    print(cnx)
+from database import connect_to_database
 
 def main():
     try :
@@ -13,7 +9,7 @@ def main():
         print("First argument in the command line need to be : \n- insert, \n- create, \n- or list")
         exit(1)
 
-    connect_to_database()
+    cnx = connect_to_database()
 
     if sys.argv[1] == "init" :
         pass
