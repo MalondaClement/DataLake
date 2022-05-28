@@ -1,6 +1,15 @@
+#
+#  database/database.py
+#  DataLake
+#
+#  Created by Clément Malonda
+#
+
 import mysql.connector
 from mysql.connector import errorcode
 from getpass import getpass
+
+LIST_OPTIONS = ["dataset", "class"]
 
 TABLES = dict()
 
@@ -119,3 +128,30 @@ def clear_database(cursor: mysql.connector.cursor.MySQLCursor):
                 print(err.msg)
         else:
             print("OK")
+
+def list_database(cursor: mysql.connector.cursor.MySQLCursor):
+    print("Options available: {}".format(LIST_OPTIONS))
+    option = ""
+    while option not in LIST_OPTIONS :
+        option = input("Select an option: ")
+
+    if option == "dataset":
+        try:
+            cursor.execute("SELECT * FROM `datalake`.`dataset`;")
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_BAD_TABLE_ERROR:
+                print("The table not exists")
+            else:
+                print(err.msg)
+    elif option == "class":
+        try:
+            cursor.execute("SELECT * FROM `datalake`.`class`;")
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_BAD_TABLE_ERROR:
+                print("The table not exists")
+            else:
+                print(err.msg)
+
+
+    for i in cursor:
+        print(i)
