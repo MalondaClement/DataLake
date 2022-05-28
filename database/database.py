@@ -49,6 +49,12 @@ TABLES["label"] = (
 )
 
 def connect_to_database() -> mysql.connector.connection.MySQLConnection:
+    '''
+        Connection to MySQL database "datalake" using localhost
+        Asks for a user and a password
+            Returns:
+                cnx (mysql.connector.connection.MySQLConnection): connection object
+    '''
     user = input("User: ")
     password = getpass()
     try:
@@ -66,6 +72,13 @@ def connect_to_database() -> mysql.connector.connection.MySQLConnection:
     return cnx
 
 def init_database(cursor: mysql.connector.cursor.MySQLCursor):
+    '''
+        Function used to initialize all the tables in the database
+            Parameters:
+                cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
+            Returns:
+                None
+    '''
     for table_name in TABLES:
         table_description = TABLES[table_name]
         try:
@@ -80,6 +93,13 @@ def init_database(cursor: mysql.connector.cursor.MySQLCursor):
             print("OK")
 
 def clear_database(cursor: mysql.connector.cursor.MySQLCursor):
+    '''
+        Function used to clear the DB
+            Parameters:
+                cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
+            Returns:
+                None
+    '''
     queries = {
         "label": "DROP TABLE `datalake`.`label`;",
         "image": "DROP TABLE `datalake`.`image`;",
