@@ -7,7 +7,7 @@
 
 import sys
 
-from database import connect_to_database, init_database, clear_database, list_database
+from database import connect_to_database, init_database, clear_database, list_database, insert_data
 
 OPTIONS = ["init", "insert", "create", "list", "clear"]
 
@@ -23,13 +23,11 @@ def main():
 
     cnx = connect_to_database()
     cursor = cnx.cursor()
-    print(cursor)
-    print(1)
 
     if sys.argv[1] == "init":
         init_database(cursor)
     elif sys.argv[1] == "insert":
-        pass
+        insert_data(cursor)
     elif sys.argv[1] == "create":
         pass
     elif sys.argv[1] == "list":

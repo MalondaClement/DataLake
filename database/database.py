@@ -5,11 +5,14 @@
 #  Created by Clément Malonda
 #
 
+import os
 import mysql.connector
 from mysql.connector import errorcode
 from getpass import getpass
 
 LIST_OPTIONS = ["dataset", "class"]
+
+INSERT_OPTIONS = ["classif", "detection", "segmentation"]
 
 TABLES = dict()
 
@@ -130,12 +133,19 @@ def clear_database(cursor: mysql.connector.cursor.MySQLCursor):
             print("OK")
 
 def list_database(cursor: mysql.connector.cursor.MySQLCursor):
+    '''
+        Function used to list some elements in the database
+            Parameters:
+                cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
+            Returns:
+                None
+    '''
     print("Options available: {}".format(LIST_OPTIONS))
     option = ""
     while option not in LIST_OPTIONS :
         option = input("Select an option: ")
 
-    if option == "dataset":
+    if option == LIST_OPTIONS[0]:
         try:
             cursor.execute("SELECT * FROM `datalake`.`dataset`;")
         except mysql.connector.Error as err:
@@ -143,7 +153,7 @@ def list_database(cursor: mysql.connector.cursor.MySQLCursor):
                 print("The table not exists")
             else:
                 print(err.msg)
-    elif option == "class":
+    elif option == LIST_OPTIONS[1]:
         try:
             cursor.execute("SELECT * FROM `datalake`.`class`;")
         except mysql.connector.Error as err:
@@ -151,7 +161,27 @@ def list_database(cursor: mysql.connector.cursor.MySQLCursor):
                 print("The table not exists")
             else:
                 print(err.msg)
-
-
     for i in cursor:
         print(i)
+
+def insert_data(cursor: mysql.connector.cursor.MySQLCursor):
+    '''
+        Function used to clear the DB
+            Parameters:
+                cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
+            Returns:
+                None
+    '''
+    print("Options available: {}".format(INSERT_OPTIONS))
+    option = ""
+    while option not in INSERT_OPTIONS :
+        option = input("Select an option: ")
+    name = input("Dataset name: ")
+    path = input("Dataset path: ")
+    print(os.path.isdir(path))
+    if option == INSERT_OPTIONS[0]:
+        print(option)
+    elif option == INSERT_OPTIONS[1]:
+        print(option)
+    elif option == INSERT_OPTIONS[2]:
+        print(option)
