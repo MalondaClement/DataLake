@@ -4,6 +4,22 @@
 
 -----
 
+## 1. Database schema
+
 ![Database Schema](img/database_schema.png)
 
-**Fig. 1** - Database Schema
+<center> **Fig. 1** - Database Schema</center>
+
+
+
+## 2. How to use this project
+### 2.1 Init database
+
+```
+python3 main.py init
+```
+
+### 2.2 Insert data in the database
+```
+python3 main.py insert
+```
