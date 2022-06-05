@@ -6,9 +6,11 @@
 #
 
 import os
+import pandas as pd
 import mysql.connector
 from mysql.connector import errorcode
 from getpass import getpass
+from database.insertion import insert_dataset
 
 LIST_OPTIONS = ["dataset", "class"]
 
@@ -178,10 +180,27 @@ def insert_data(cursor: mysql.connector.cursor.MySQLCursor):
         option = input("Select an option: ")
     name = input("Dataset name: ")
     path = input("Dataset path: ")
-    print(os.path.isdir(path))
+    if not os.path.isdir(path):
+        print("{} is not a directory".format(path))
+        return
+
     if option == INSERT_OPTIONS[0]:
-        print(option)
+        if not insert_dataset(cursor, name, 0):
+            return
+        try:
+            labels = pd.read_csv(os.path.join(path, "labels.csv"))
+        except FileNotFoundError:
+            print("The file {} does not exist".format(os.path.join(path, "labels.csv")))
+            return 1
+        for i in labels.index:
+            print("Insert {} {}".format(os.path.join(path,labels["image"][i]), labels["label"][i]))
+            # inserer class
+            # inserer image
+            # inserer label
+
     elif option == INSERT_OPTIONS[1]:
-        print(option)
+        if not insert_dataset(cursor, name, 1):
+            return
     elif option == INSERT_OPTIONS[2]:
-        print(option)
+        if not insert_dataset(cursor, name, 2):
+            return

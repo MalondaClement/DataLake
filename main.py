@@ -22,6 +22,7 @@ def main():
         exit(1)
 
     cnx = connect_to_database()
+    cnx.autocommit = True
     cursor = cnx.cursor()
 
     if sys.argv[1] == "init":
