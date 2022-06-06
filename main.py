@@ -22,13 +22,12 @@ def main():
         exit(1)
 
     cnx = connect_to_database()
-    cnx.autocommit = True
     cursor = cnx.cursor()
 
     if sys.argv[1] == "init":
         init_database(cursor)
     elif sys.argv[1] == "insert":
-        insert_data(cursor)
+        insert_data(cnx, cursor)
     elif sys.argv[1] == "create":
         pass
     elif sys.argv[1] == "list":

@@ -166,7 +166,7 @@ def list_database(cursor: mysql.connector.cursor.MySQLCursor):
     for i in cursor:
         print(i)
 
-def insert_data(cursor: mysql.connector.cursor.MySQLCursor):
+def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.connector.cursor.MySQLCursor):
     '''
         Function used to clear the DB
             Parameters:
@@ -186,18 +186,23 @@ def insert_data(cursor: mysql.connector.cursor.MySQLCursor):
 
     if option == INSERT_OPTIONS[0]:
         if not insert_dataset(cursor, name, 0):
+            cnx.rollback()
             return
+        else:
+            cnx.commit()
         try:
             labels = pd.read_csv(os.path.join(path, "labels.csv"))
         except FileNotFoundError:
             print("The file {} does not exist".format(os.path.join(path, "labels.csv")))
             return 1
         for i in labels.index:
-            # print("Insert {} {}".format(os.path.join(path,labels["image"][i]), labels["label"][i]))
-            # inserer class
-            insert_class(cursor, labels["label"][i])
-            insert_image(cursor, os.path.join(path, labels["image"][i]), name)
+            is_class_insert = insert_class(cursor, labels["label"][i])
+            is_image_insert = insert_image(cursor, os.path.join(path, labels["image"][i]), name)
             # inserer label
+            if is_class_insert and is_image_insert:
+                cnx.commit()
+            else:
+                cnx.rollback()
 
     elif option == INSERT_OPTIONS[1]:
         if not insert_dataset(cursor, name, 1):
