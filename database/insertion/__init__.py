@@ -5,4 +5,4 @@
 #  Created by Clément Malonda
 #
 
-from .gen import insert_dataset
+from .gen import insert_dataset, insert_class, insert_image, insert_label

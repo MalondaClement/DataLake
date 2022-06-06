@@ -8,8 +8,7 @@
 
 ![Database Schema](img/database_schema.png)
 
-<center> **Fig. 1** - Database Schema</center>
-
+**Fig. 1** - _Database Schema_
 
 
 ## 2. How to use this project
