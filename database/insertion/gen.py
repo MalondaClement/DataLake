@@ -16,7 +16,7 @@ def insert_dataset(cursor: mysql.connector.cursor.MySQLCursor, name: str, type: 
             Parameters:
                 cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
                 name (str): Dataset name
-                type (int): Dataset type, 0 -> classif, 1 -> detection and 2 -> segmentation
+                type (int): Dataset type, 0 -> classification, 1 -> detection and 2 -> segmentation
             Returns:
                 bool
     '''
@@ -87,5 +87,28 @@ def insert_image(cursor: mysql.connector.cursor.MySQLCursor, path: str, dataset_
         return False
     return True
 
-def insert_label():
-    pass
+def insert_label(cursor: mysql.connector.cursor.MySQLCursor, path: str, class_name: str, type: int, points: str) -> bool:
+    '''
+        Function used to add an entry in the label table
+            Parameters:
+                cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
+                path (str): path to the image
+                class (str): class name for the label
+                type (int): label type, 0 -> classification, 1 -> detection and 2 -> segmentation
+                points (str): points for bbox and segmentation label ("no points" if classification label)
+            Returns:
+                bool
+    '''
+    try:
+        cursor.execute("INSERT INTO datalake.label (path, className, labelType, points) VALUES (\"{}\", \"{}\", {}, \"{}\")".format(path, class_name, type, points))
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_DUP_ENTRY:
+            print("The label for the image {} is already in the database".format(name))
+        elif err.errno == errorcode.ER_BAD_TABLE_ERROR:
+            print("Print the table Dataset does not exist")
+            print("Please use \"python3 main.py init\" before")
+        else:
+            print("Unexpected error {}".format(err.errno))
+        return False
+    return True
+    # INSERT INTO datalake.label (path, className, labelType, points) VALUES (\"{}\", \"{}\", {}, \"{}\")

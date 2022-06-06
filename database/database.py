@@ -49,7 +49,7 @@ TABLES["image"] = (
 
 TABLES["label"] = (
     "CREATE TABLE `label` ("
-    "   `labelID` int NOT NULL,"
+    "   `labelID` int NOT NULL AUTO_INCREMENT,"
     "   `path` varchar(200) NOT NULL,"
     "   `className` varchar(20) NOT NULL,"
     "   `labelType` int NOT NULL,"
@@ -170,6 +170,7 @@ def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.c
     '''
         Function used to clear the DB
             Parameters:
+                cnx: mysql.connector.connection.MySQLConnection: SQL connexion used to commit or rollback changes
                 cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
             Returns:
                 None
@@ -198,8 +199,8 @@ def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.c
         for i in labels.index:
             is_class_insert = insert_class(cursor, labels["label"][i])
             is_image_insert = insert_image(cursor, os.path.join(path, labels["image"][i]), name)
-            # inserer label
-            if is_class_insert and is_image_insert:
+            is_label_insert = insert_label(cursor, os.path.join(path, labels["image"][i]), labels["label"][i], 0, "no points")
+            if is_class_insert and is_image_insert and is_label_insert:
                 cnx.commit()
             else:
                 cnx.rollback()
