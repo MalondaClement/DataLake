@@ -6,6 +6,7 @@
 #
 
 import os
+import json
 from lxml import etree
 import pandas as pd
 import mysql.connector
@@ -13,6 +14,7 @@ from mysql.connector import errorcode
 from getpass import getpass
 
 from database.insertion import insert_dataset, insert_class, insert_image, insert_label
+from database.create import create_classification_dataset, create_detection_dataset, create_segmentation_dataset
 
 LIST_OPTIONS = ["dataset", "class"]
 
@@ -255,3 +257,31 @@ def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.c
             cnx.commit()
         while format_option not in FORMAT_OPTIONS :
             format_option = input("Select a format: ")
+
+def create_dataset(cursor: mysql.connector.cursor.MySQLCursor):
+    file_path = input("JSON file for dataset description: ")
+
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    option = data["type"]
+
+    if option not in INSERT_OPTIONS:
+        print("Type: {}".format(INSERT_OPTIONS))
+        return
+    path = data["path"]
+
+    if not os.path.isdir(path):
+        print("Creating {} ...".format(path))
+        os.mkdir(path)
+    else:
+        print("The dataset {} already exists".format(path))
+        return
+
+    if option == INSERT_OPTIONS[0]:
+        create_classification_dataset(cursor, data)
+    elif option == INSERT_OPTIONS[1]:
+        pass
+    elif option == INSERT_OPTIONS[2]:
+        pass
+    else:
+        return
