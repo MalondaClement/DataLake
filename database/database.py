@@ -6,15 +6,19 @@
 #
 
 import os
+from lxml import etree
 import pandas as pd
 import mysql.connector
 from mysql.connector import errorcode
 from getpass import getpass
+
 from database.insertion import insert_dataset, insert_class, insert_image, insert_label
 
 LIST_OPTIONS = ["dataset", "class"]
 
 INSERT_OPTIONS = ["classif", "detection", "segmentation"]
+
+FORMAT_OPTIONS = ["xml", "json"]
 
 TABLES = dict()
 
@@ -207,7 +211,47 @@ def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.c
 
     elif option == INSERT_OPTIONS[1]:
         if not insert_dataset(cursor, name, 1):
+            cnx.rollback()
             return
+        else:
+            cnx.commit()
+        print("Format available: {}".format(FORMAT_OPTIONS))
+        format_option = ""
+        while format_option not in FORMAT_OPTIONS :
+            format_option = input("Select a format: ")
+        if format_option == FORMAT_OPTIONS[0]:
+            for file in os.listdir(os.path.join(path, "labels")):
+                tree = etree.parse(os.path.join(path, "labels", file))
+                image_name = tree.xpath("/annotation/filename")[0].text
+                image_path = os.path.join(path, "images", image_name)
+                is_image_insert = insert_image(cursor, image_path, name)
+                if is_image_insert:
+                    cnx.commit()
+                else:
+                    cnx.rollback()
+                    continue
+                for elem in tree.xpath("/annotation/object"):
+                    class_name = elem.xpath("name")[0].text
+                    is_class_insert = insert_class(cursor, class_name)
+                    points = elem.xpath("bndbox")[0].xpath("xmin")[0].text + ";" + elem.xpath("bndbox")[0].xpath("ymin")[0].text + ";" + elem.xpath("bndbox")[0].xpath("xmax")[0].text + ";" + elem.xpath("bndbox")[0].xpath("ymax")[0].text
+                    is_label_insert = insert_label(cursor, image_path, class_name, 1, points)
+                    if is_image_insert:
+                        cnx.commit()
+                    else:
+                        cnx.rollback()
+                        continue
+
+        elif format_option == FORMAT_OPTIONS[1]:
+            print("Format JSON not supported")
+            return
+        else:
+            return
+
     elif option == INSERT_OPTIONS[2]:
         if not insert_dataset(cursor, name, 2):
+            cnx.rollback()
             return
+        else:
+            cnx.commit()
+        while format_option not in FORMAT_OPTIONS :
+            format_option = input("Select a format: ")
