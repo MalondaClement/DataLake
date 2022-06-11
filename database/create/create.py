@@ -7,10 +7,19 @@
 
 import os
 import pandas as pd
+from PIL import Image
 import mysql.connector
 from mysql.connector import errorcode
 
 def create_classification_dataset(cursor: mysql.connector.cursor.MySQLCursor, data: dict):
+    '''
+        Function used to create a classification dataset
+            Parameters:
+                cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
+                data (dict): dataset descriptor from json file
+            Returns:
+                None
+    '''
     res = list()
     os.mkdir(os.path.join(data["path"], "images"))
     for c in list(data["classes"].keys()):
@@ -29,8 +38,22 @@ def create_classification_dataset(cursor: mysql.connector.cursor.MySQLCursor, da
     df = pd.DataFrame(columns=["image","label"])
     for i in range(len(res)):
         new_image_path = os.path.join("images", res[i][1],str(i)) + ".jpg"
-        df = df.append({"image": new_image_path, "label":res[i][1]}, ignore_index = True)
-    print(df)
+        if res[i][2] != 2: # TEMP: condition will be remove
+            df = df.append({"image": new_image_path, "label":res[i][1]}, ignore_index = True)
+            img = Image.open(res[i][0])
+        else:
+            continue
+        if res[i][2] == 0:
+            img.save(os.path.join(data["path"], new_image_path), "JPEG")
+        elif res[i][2] == 1:
+            pos = res[i][3].split(";")
+            print(pos)
+            xmin = int(pos[0])
+            ymin = int(pos[1])
+            xmax = int(pos[2])
+            ymax = int(pos[3])
+            new_img = img.crop((xmin, ymin, xmax, ymax))
+            new_img.save(os.path.join(data["path"], new_image_path), "JPEG")
     df.to_csv(os.path.join(data["path"], "labels.csv"), index=False)
 
 

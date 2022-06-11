@@ -174,7 +174,7 @@ def list_database(cursor: mysql.connector.cursor.MySQLCursor):
 
 def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.connector.cursor.MySQLCursor):
     '''
-        Function used to clear the DB
+        Function used to insert new dataset the DB
             Parameters:
                 cnx: mysql.connector.connection.MySQLConnection: SQL connexion used to commit or rollback changes
                 cursor (mysql.connector.cursor.MySQLCursor): SQL cursor used to send queries to the DB
@@ -259,6 +259,13 @@ def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.c
             format_option = input("Select a format: ")
 
 def create_dataset(cursor: mysql.connector.cursor.MySQLCursor):
+    '''
+        Function used to create a new dataset from the data in the DB
+            Parameters:
+                cnx: mysql.connector.connection.MySQLConnection: SQL connexion used to commit or rollback changes
+            Returns:
+                None
+    '''
     file_path = input("JSON file for dataset description: ")
 
     with open(file_path, 'r') as f:
