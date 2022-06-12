@@ -22,6 +22,95 @@ python3 main.py init
 ```
 python3 main.py insert
 ```
+#### 2.2.1 Insert classification dataset
+Dataset tree:
+* root
+    * images
+        * label_1
+            * image1.jpg
+            * image2.jpg
+            * ...
+        * label_2
+            * image1.jpg
+            * image2.jpg
+            * ...
+        * label_3
+            * ...
+    * labels.csv
+
+labels.csv columns name `image`, `label`
+
+#### 2.2.2 Insert detection dataset
+##### 2.2.2.a XML format
+Dataset tree:
+* root
+    * images
+        * image1.jpg
+        * image2.jpg
+        * ...
+    * labels
+        * label1.xlm
+        * label2.xlm
+        * ...
+
+```xml
+<annotation>
+	<filename>000005.jpg</filename>
+	<size>
+		<width>500</width>
+		<height>375</height>
+		<depth>3</depth>
+	</size>
+	<object>
+		<name>chair</name>
+		<bndbox>
+			<xmin>263</xmin>
+			<ymin>211</ymin>
+			<xmax>324</xmax>
+			<ymax>339</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>chair</name>
+		<bndbox>
+			<xmin>165</xmin>
+			<ymin>264</ymin>
+			<xmax>253</xmax>
+			<ymax>372</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>chair</name>
+		<bndbox>
+			<xmin>5</xmin>
+			<ymin>244</ymin>
+			<xmax>67</xmax>
+			<ymax>374</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>chair</name>
+		<bndbox>
+			<xmin>241</xmin>
+			<ymin>194</ymin>
+			<xmax>295</xmax>
+			<ymax>299</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>chair</name>
+		<bndbox>
+			<xmin>277</xmin>
+			<ymin>186</ymin>
+			<xmax>312</xmax>
+			<ymax>220</ymax>
+		</bndbox>
+	</object>
+</annotation>
+```
+
+##### 2.2.2.b CSV format
+
 
 ### 2.3 Create a new dataset from the data in the database
 ```
