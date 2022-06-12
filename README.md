@@ -110,7 +110,15 @@ Dataset tree:
 ```
 
 ##### 2.2.2.b CSV format
+Dataset tree:
+* root
+    * images
+        * image1.jpg
+        * image2.jpg
+        * ...
+    * labels.csv
 
+labels.csv columns name `image`, `label`, `xmin`, `ymin`, `xmax`, `ymax`
 
 ### 2.3 Create a new dataset from the data in the database
 ```
