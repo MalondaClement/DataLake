@@ -287,7 +287,7 @@ def create_dataset(cursor: mysql.connector.cursor.MySQLCursor):
     if option == INSERT_OPTIONS[0]:
         create_classification_dataset(cursor, data)
     elif option == INSERT_OPTIONS[1]:
-        pass
+        create_detection_dataset(cursor, data)
     elif option == INSERT_OPTIONS[2]:
         pass
     else:
