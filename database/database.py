@@ -7,6 +7,7 @@
 
 import os
 import json
+import pandas as pd
 from lxml import etree
 import pandas as pd
 import mysql.connector
@@ -20,7 +21,7 @@ LIST_OPTIONS = ["dataset", "class"]
 
 INSERT_OPTIONS = ["classif", "detection", "segmentation"]
 
-FORMAT_OPTIONS = ["xml", "json"]
+FORMAT_OPTIONS = ["xml", "csv"]
 
 TABLES = dict()
 
@@ -244,8 +245,24 @@ def insert_data(cnx: mysql.connector.connection.MySQLConnection, cursor: mysql.c
                         continue
 
         elif format_option == FORMAT_OPTIONS[1]:
-            print("Format JSON not supported")
-            return
+            df = pd.read_csv(os.path.join(path, "labels.csv"))
+            for _, row in df.iterrows():
+                image_path = os.path.join(path, row["image"])
+                is_image_insert = insert_image(cursor, image_path, name)
+                if is_image_insert:
+                    cnx.commit()
+                else:
+                    cnx.rollback()
+                    # continue
+                class_name = row["label"]
+                is_class_insert = insert_class(cursor, class_name)
+                points = str(row["xmin"]) + ";" + str(row["ymin"]) + ";" + str(row["xmax"]) + ";" + str(row["ymax"])
+                is_label_insert = insert_label(cursor, image_path, class_name, 1, points)
+                if is_image_insert:
+                    cnx.commit()
+                else:
+                    cnx.rollback()
+
         else:
             return
 
